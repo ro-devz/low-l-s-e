@@ -35,7 +35,7 @@ public:
 
     virtual void update(float timeStep)
     {
-        // Update velocity
+        // Update velocity = VITESSE
         vx += ax * timeStep;
         vy += ay * timeStep;
 
