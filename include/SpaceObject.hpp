@@ -18,7 +18,7 @@ protected:
     string name;  // A name
     string color; // A color
     float x, y;   // A position (in m, for the center of mass, in the coordinates system)
-    float vx, vy; // A velocity (in m/s)
+    float vx, vy; // A velocity (in m/s) VITESSE
     float ax, ay; // An acceleration (in m/s²)
     float mass;   // A mass (in kg)
     float radius; // A radius (in m)
@@ -43,10 +43,12 @@ public:
         x += vx * timeStep;
         y += vy * timeStep;
 
-        // Reset acceleration for the next iteration
-        ax = 0;
-        ay = 0;
     }
+
+// conference Feynman 
+  //  function force gravite (lui, autre planette) --> toutes les planetes
+
+  // m * a = Toutes les forces ( = gravites toutes les autres planetes)
 
     virtual void render() const = 0;  // Pure virtual method to render the object
     
