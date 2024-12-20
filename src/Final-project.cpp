@@ -22,13 +22,21 @@ int main()
     sf::Vector2f center(0, 0);
     float timeStep = 3600.0f; // One hour per step
     float timeFactor = 1.0f;
+	 const double AU = 149.6e9;  // Astronomical Unit in meters
+    
+    // Initialize objects with real astronomical data
+    StellarObject sun("Sun", 0, 0, 0, 0, 1.989e30, "Yellow", 696340e3);
+    
+    // Mercury: 0.387 AU from Sun
+    StellarObject mercury("Mercury", 0.387 * AU, 0, 0, 47400, 3.3011e23, "Gray", 2439.7e3);
+    
+    // Venus: 0.723 AU from Sun
+    StellarObject venus("Venus", 0.723 * AU, 0, 0, 35020, 4.8675e24, "Yellow", 6051.8e3);
+    
+    // Earth: 1 AU from Sun
+    StellarObject earth("Earth", AU, 0, 0, 29780, 5.972e24, "Blue", 6371.0e3);
 
-	StellarObject sun("Sun", 0, 0, 0, 0, 1.989e30, "Yellow", 696340.0e3); // 696,340 km in meters
-
-    // Create Planets (StellarObjects)
-    StellarObject mercury("Mercury", 57.91e9, 0, 0, 47.87e3, 3.3011e23, "Gray", 2439.7e3);     // 2,439.7 km in meters
-    StellarObject venus("Venus", 108.2e9, 0, 0, 35.02e3, 4.8675e24, "Yellow", 6051.8e3);       // 6,051.8 km in meters
-    StellarObject earth("Earth", 149.6e9, 0, 0, 29.78e3, 5.972e24, "Blue", 6371.0e3);          // 6,371 km in meters
+	
     StellarObject mars("Mars", 227.9e9, 0, 0, 24.077e3, 6.4171e23, "Red", 3396.2e3);           // 3,396.2 km in meters
     StellarObject jupiter("Jupiter", 778.5e9, 0, 0, 13.07e3, 1.898e27, "Orange", 69911.0e3);   // 69,911 km in meters
     StellarObject saturn("Saturn", 1.429e12, 0, 0, 9.69e3, 5.683e26, "Golden", 58232.0e3);     // 58,232 km in meters
@@ -44,7 +52,7 @@ int main()
     StellarObject europa("Europa", 0.671e9, 0, 0, 1.0e3, 4.7998e22, "White", 1560.8e3); // Europa: radius = 1,560.8 km
 
     // Put all objects into a vector for easy iteration
-    vector<SpaceObject *> objects = {&sun, &mercury, &venus, &earth, &mars, &jupiter, &saturn, &uranus, &neptune, &satellite, &luna, &io, &europa};
+    vector<SpaceObject *> objects = {&sun, &mercury, &venus, &earth/*, &mars, &jupiter, &saturn, &uranus, &neptune, &satellite, &luna, &io, &europa*/};
 
 
     // Create SFML window
