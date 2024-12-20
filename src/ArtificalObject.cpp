@@ -17,28 +17,27 @@ using namespace std;
 ArtificialObject::ArtificialObject(const string &name, float x, float y, float vx, float vy, float mass, const string &color, float width, float height, float thrustCapacity)
     : SpaceObject(name, x, y, vx, vy, mass, color), width(width), height(height), thrustCapacity(thrustCapacity) {}
 
-// Update position and velocity based on the time step and any forces (e.g., thrust)
-// void ArtificialObject::update(float timeStep) {
-//     // Update velocity using acceleration
-//     vx += ax * timeStep;
-//     vy += ay * timeStep;
 
-//     // Update position using velocity
-//     x += vx * timeStep;
-//     y += vy * timeStep;
+void ArtificialObject::render(sf::RenderWindow& window, float scale, const sf::Vector2f& center) const {
+    // Create rectangle shape
+    sf::RectangleShape shape(sf::Vector2f(width * scale, height * scale));
+    
+    // Convert position to screen coordinates
+    sf::Vector2f screenPos = worldToScreen(scale, center, window.getSize());
+    
+    // Set position (adjust to center the rectangle)
+    shape.setPosition(screenPos.x - (width * scale / 2), screenPos.y - (height * scale / 2));
+    
+    // Set color
+    if (color == "Grey") shape.setFillColor(sf::Color(128, 128, 128));
+    else shape.setFillColor(sf::Color::White);
 
-//     // Reset acceleration for the next iteration
-//     ax = 0;
-//     ay = 0;
-// }
+    // Add selection highlight
+    if (selected) {
+        shape.setOutlineThickness(2.0f);
+        shape.setOutlineColor(sf::Color::Green);
+    }
 
-// Render method (this will depend on the graphics library used)
-void ArtificialObject::render() const {
-    // Placeholder rendering logic (for SFML or similar graphics libraries)
-    cout << "Rendering Artificial Object: " << name << " at (" << x << ", " << y << ")" << endl;
-    // If using SFML, you might do something like:
-    // sf::RectangleShape shape(sf::Vector2f(width, height));
-    // shape.setPosition(x, y);
-    // shape.setFillColor(sf::Color::Red); // Use the 'color' string or convert to sf::Color
-    // window.draw(shape);
+    // Draw the shape
+    window.draw(shape);
 }
