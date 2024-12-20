@@ -5,17 +5,24 @@
 // Copyright   : Your copyright notice
 // Description : Final Project
 //============================================================================
-
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
 #include <string>
 #include "ArtificialObject.hpp"
 #include "StellarObject.hpp"
 
+
 using namespace std;
 
 int main()
 {
+	// Simulation parameters
+    float scale = 1e-9f;  // Pixels per meter
+    sf::Vector2f center(0, 0);
+    float timeStep = 3600.0f; // One hour per step
+    float timeFactor = 1.0f;
+
 	StellarObject sun("Sun", 0, 0, 0, 0, 1.989e30, "Yellow", 696340.0e3); // 696,340 km in meters
 
     // Create Planets (StellarObjects)
@@ -39,22 +46,113 @@ int main()
     // Put all objects into a vector for easy iteration
     vector<SpaceObject *> objects = {&sun, &mercury, &venus, &earth, &mars, &jupiter, &saturn, &uranus, &neptune, &satellite, &luna, &io, &europa};
 
-    // Time step for simulation (e.g., 1 second)
-    float timeStep = 1.0;
 
-    // Simple simulation loop
-    for (int i = 0; i < 10; ++i)
-    { // Simulate 10 steps
-        cout << "Simulation step " << i + 1 << ":\n";
+    // Create SFML window
+    sf::RenderWindow window(sf::VideoMode(1600, 900), "Star System Simulation");
+    window.setFramerateLimit(60);
 
-        // Update all objects
-        for (auto *obj : objects)
-        {
-            obj->update(timeStep);
-            obj->render(); // For now, we're just printing the object's state
+
+
+    vector<SpaceObject*> objects = {&sun, &mercury, &venus, &earth /* ... add other objects */};
+    SpaceObject* selectedObject = nullptr;
+
+    // Font for text
+    sf::Font font;
+    if (!font.loadFromFile("arial.ttf")) { // Make sure you have this font file
+        cout << "Error loading font" << endl;
+        return -1;
+    }
+
+    // Main loop
+    while (window.isOpen()) {
+        // Handle events
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            // Zoom with mouse wheel
+            if (event.type == sf::Event::MouseWheelScrolled) {
+                if (event.mouseWheelScroll.delta > 0)
+                    scale *= 1.1f;
+                else
+                    scale /= 1.1f;
+            }
+
+            // Pan with middle mouse button
+            if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
+                center.x -= event.mouseMove.x * (1.0f / scale);
+                center.y -= event.mouseMove.y * (1.0f / scale);
+            }
+
+            // Object selection with left click
+            if (event.type == sf::Event::MouseButtonPressed && 
+                event.mouseButton.button == sf::Mouse::Left) {
+                // Deselect previous object
+                if (selectedObject) {
+                    selectedObject->setSelected(false);
+                    selectedObject = nullptr;
+                }
+                
+                // Convert mouse position to world coordinates and check each object
+                sf::Vector2f mousePos = window.mapPixelToCoords(
+                    sf::Vector2i(event.mouseButton.x, event.mouseButton.y));
+                
+                for (auto* obj : objects) {
+                    // Simple distance check for selection
+                    sf::Vector2f objPos = obj->worldToScreen(scale, center, window.getSize());
+                    float dx = mousePos.x - objPos.x;
+                    float dy = mousePos.y - objPos.y;
+                    if (sqrt(dx*dx + dy*dy) < 10.0f) { // 10 pixel selection radius
+                        selectedObject = obj;
+                        obj->setSelected(true);
+                        break;
+                    }
+                }
+            }
+
+            // Adjust time factor with + and - keys
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Add)
+                    timeFactor *= 2.0f;
+                else if (event.key.code == sf::Keyboard::Subtract)
+                    timeFactor /= 2.0f;
+            }
         }
 
-        cout << endl;
+        // Update physics
+        for (auto* obj : objects) {
+            obj->update(timeStep * timeFactor, objects);
+        }
+
+        // Clear window
+        window.clear(sf::Color::Black);
+
+        // Render all objects
+        for (auto* obj : objects) {
+            obj->render(window, scale, center);
+        }
+
+        // Draw legend
+        sf::Text text;
+        text.setFont(font);
+        text.setCharacterSize(14);
+        text.setFillColor(sf::Color::White);
+        
+        string info = "Time Factor: " + to_string(timeFactor) + "x\n";
+        info += "Scale: " + to_string(scale) + " pixels/m\n";
+        if (selectedObject) {
+            info += "\nSelected: " + selectedObject->getName() + "\n";
+            info += "Position: (" + to_string(selectedObject->getX()) + ", " 
+                   + to_string(selectedObject->getY()) + ")\n";
+        }
+        
+        text.setString(info);
+        text.setPosition(10, 10);
+        window.draw(text);
+
+        // Display the frame
+        window.display();
     }
 
     return 0;
