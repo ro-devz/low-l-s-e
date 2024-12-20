@@ -41,3 +41,18 @@ void ArtificialObject::render(sf::RenderWindow& window, float scale, const sf::V
     // Draw the shape
     window.draw(shape);
 }
+
+void ArtificialObject::applyThrust(double dx, double dy) {
+    // Calculate thrust direction
+    double magnitude = sqrt(dx*dx + dy*dy);
+    if (magnitude > 0) {
+        // Apply thrust in the opposite direction of movement (as per requirements)
+        double thrust_ax = -(thrustCapacity / mass) * (dx / magnitude);
+        double thrust_ay = -(thrustCapacity / mass) * (dy / magnitude);
+        
+        // Add thrust acceleration to current acceleration
+        ax += thrust_ax;
+        ay += thrust_ay;
+    }
+}
+
