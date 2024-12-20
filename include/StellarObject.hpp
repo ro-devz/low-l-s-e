@@ -25,7 +25,7 @@ public:
     StellarObject(const string &name, float x, float y, float vx, float vy, float mass, const string &color, float radius);  // Use const std::string&
     ~StellarObject() override = default;
 
-    void render() const override;
+    void render(sf::RenderWindow& window, float scale, const sf::Vector2f& center) const override;
 };
 
 #endif
