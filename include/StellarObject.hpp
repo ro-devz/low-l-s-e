@@ -26,6 +26,9 @@ public:
     ~StellarObject() override = default;
 
     void render(sf::RenderWindow& window, float scale, const sf::Vector2f& center) const override;
+    
+    // Add method to apply thrust
+    void applyThrust(float thrustX, float thrustY, float timeStep);
 };
 
 #endif
