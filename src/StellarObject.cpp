@@ -17,28 +17,36 @@ using namespace std;
 StellarObject::StellarObject(const string &name, float x, float y, float vx, float vy, float mass, const string &color, float radius)
     : SpaceObject(name, x, y, vx, vy, mass, color), radius(radius) {}
 
-// Update position and velocity based on the time step (physics-based updates)
-// void StellarObject::update(float timeStep) {
-//     // Update velocity using acceleration
-//     vx += ax * timeStep;
-//     vy += ay * timeStep;
+void StellarObject::render(sf::RenderWindow& window, float scale, const sf::Vector2f& center) const {
+    // Convert radius to screen coordinates (with minimum size for visibility)
+    float screenRadius = std::max(2.0f, radius * scale);
+    
+    // Create circle shape
+    sf::CircleShape shape(screenRadius);
+    
+    // Convert position to screen coordinates
+    sf::Vector2f screenPos = worldToScreen(scale, center, window.getSize());
+    
+    // Set position (adjust for radius to center the circle)
+    shape.setPosition(screenPos.x - screenRadius, screenPos.y - screenRadius);
+    
+    // Set color
+    if (color == "Yellow") shape.setFillColor(sf::Color::Yellow);
+    else if (color == "Blue") shape.setFillColor(sf::Color::Blue);
+    else if (color == "Red") shape.setFillColor(sf::Color::Red);
+    else if (color == "Gray") shape.setFillColor(sf::Color(128, 128, 128));
+    else if (color == "Orange") shape.setFillColor(sf::Color(255, 165, 0));
+    else if (color == "Golden") shape.setFillColor(sf::Color(255, 215, 0));
+    else if (color == "Light Blue") shape.setFillColor(sf::Color(173, 216, 230));
+    else if (color == "White") shape.setFillColor(sf::Color::White);
+    else shape.setFillColor(sf::Color::White);
 
-//     // Update position using velocity
-//     x += vx * timeStep;
-//     y += vy * timeStep;
+    // Add selection highlight
+    if (selected) {
+        shape.setOutlineThickness(2.0f);
+        shape.setOutlineColor(sf::Color::Green);
+    }
 
-//     // Reset acceleration for the next iteration
-//     ax = 0;
-//     ay = 0;
-// }
-
-// Render method (this will depend on the graphics library used)
-void StellarObject::render() const {
-    // Placeholder rendering logic (for SFML or similar graphics libraries)
-    cout << "Rendering Stellar Object: " << name << " at (" << x << ", " << y << ")" << endl;
-    // If using SFML, you might do something like:
-    // sf::CircleShape shape(radius);
-    // shape.setPosition(x, y);
-    // shape.setFillColor(sf::Color::Yellow); // Use the 'color' string or convert to sf::Color
-    // window.draw(shape);
+    // Draw the shape
+    window.draw(shape);
 }
