@@ -25,7 +25,11 @@ public:
 
     ArtificialObject(const string &name, float x, float y, float vx, float vy, float mass, const string &color, float width, float height, float thrustCapacity);
     ~ArtificialObject() override = default;
+    void update(double timeStep, const vector<SpaceObject*>& allObjects) override;
+
     void render() const override;
+    void applyThrust(double dx, double dy);
+
 };
 
 #endif
