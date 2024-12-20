@@ -18,6 +18,8 @@ using namespace std;
 class StellarObject : public SpaceObject {
 protected:
     float radius;  // Radius of the stellar object
+    float thrustCapacity; // Thrust capacity in Newtons
+
     // A stellar object shall be represented as a circle
 
 public:
